@@ -1,0 +1,61 @@
+{
+  "name": "geosoft-service",
+  "version": "1.0.0",
+  "description": "a node js backend for geosoft apps",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./dist/index.js",
+    "dev": "nodemon",
+    "build": "tsc -p .",
+    "format": "prettier --check --ignore-path .gitignore .",
+    "format:fix": "prettier --write --ignore-path .gitignore .",
+    "prepare": "husky",
+    "commit-config": "node dice.config.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GEOSOFT-GLOBAL/geosoft-service.git"
+  },
+  "keywords": [
+    "geosoft",
+    "milton",
+    "black",
+    "desmond",
+    "eteh",
+    "timetablely",
+    "docxiq",
+    "linkshyft",
+    "geo-connects"
+  ],
+  "author": "milton black",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GEOSOFT-GLOBAL/geosoft-service/issues"
+  },
+  "homepage": "https://github.com/GEOSOFT-GLOBAL/geosoft-service#readme",
+  "dependencies": {
+    "@google/genai": "^1.34.0",
+    "bcrypt": "^6.0.0",
+    "cloudinary": "^2.8.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "googleapis": "^169.0.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.0.2",
+    "morgan": "^1.10.1",
+    "multer": "^2.0.2",
+    "multer-storage-cloudinary": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^25.0.3",
+    "colors": "^1.4.0",
+    "nodemon": "^3.1.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
