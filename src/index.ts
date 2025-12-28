@@ -1,7 +1,7 @@
 import cors from "cors";
-import path from "path";
 import color from "colors";
 import morgan from "morgan";
+import pagesRouter from "./routes/pages.route";
 import { rootRouter } from "./routes";
 import { connectDB } from "./config/db";
 import express, { Application, json } from "express";
@@ -21,17 +21,7 @@ app.use(morgan("dev"));
 app.use(cors({ origin: ALLOWED_ORIGINS, credentials: true }));
 app.use(json());
 
-// Serve static HTML pages per app
-app.use("/pages/docxiq", express.static(path.join(__dirname, "public/docxiq")));
-app.use(
-  "/pages/timetablely",
-  express.static(path.join(__dirname, "public/timetablely"))
-);
-app.use(
-  "/pages/linkshyft",
-  express.static(path.join(__dirname, "public/linkshyft"))
-);
-
+app.use("/pages", pagesRouter);
 app.use("/api/v1", rootRouter);
 app.use(errorHandler);
 
