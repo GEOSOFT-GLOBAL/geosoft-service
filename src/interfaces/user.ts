@@ -4,6 +4,7 @@ export enum AppSource {
   TIMETABLELY = "timetablely",
   DOCXIQ = "docxiq",
   LINKSHYFT = "linkshyft",
+  TICKLY = "tickly",
 }
 
 export enum AuthProvider {

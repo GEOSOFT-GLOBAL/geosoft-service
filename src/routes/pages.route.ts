@@ -12,5 +12,6 @@ router.use(
   "/linkshyft",
   express.static(path.join(__dirname, "../public/linkshyft"))
 );
+router.use("/tickly", express.static(path.join(__dirname, "../public/tickly")));
 
 export default router;
