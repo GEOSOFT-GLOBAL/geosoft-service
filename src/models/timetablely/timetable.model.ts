@@ -1,38 +1,26 @@
 import { model, Schema, Types } from "mongoose";
+import { ICellData, IColumnConfig } from "./template.model";
 
-export interface ICellData {
-  row: number;
-  col: number;
-  content: string;
-  backgroundColor?: string;
-  textAlign?: "left" | "center" | "right";
-  textOrientation?: "horizontal" | "vertical";
-  isMerged?: boolean;
-  mergeSpan?: { rows: number; cols: number };
-  isHidden?: boolean;
-}
-
-export interface IColumnConfig {
-  index: number;
-  duration: number; // in minutes
-}
-
-export interface ITemplate {
+export interface ITimetable {
   userId: Types.ObjectId;
+  sessionId: Types.ObjectId;
   name: string;
-  description?: string;
   columnCount: number;
   defaultSlotDuration: number;
+  startTime: string; // e.g., "08:00"
   columns: IColumnConfig[];
   cells: ICellData[];
+  isGenerated: boolean;
+  generatedAt?: Date;
+  generationType?: "standard" | "ai";
 }
 
-export interface ITemplateDocument extends ITemplate, Document {
+export interface ITimetableDocument extends ITimetable, Document {
   createdAt: Date;
   updatedAt: Date;
 }
 
-const cellDataSchema = new Schema<ICellData>(
+const cellDataSchema = new Schema(
   {
     row: { type: Number, required: true },
     col: { type: Number, required: true },
@@ -50,7 +38,7 @@ const cellDataSchema = new Schema<ICellData>(
   { _id: false }
 );
 
-const columnConfigSchema = new Schema<IColumnConfig>(
+const columnConfigSchema = new Schema(
   {
     index: { type: Number, required: true },
     duration: { type: Number, required: true, default: 45 },
@@ -58,19 +46,24 @@ const columnConfigSchema = new Schema<IColumnConfig>(
   { _id: false }
 );
 
-const templateSchema = new Schema<ITemplateDocument>(
+const timetableSchema = new Schema<ITimetableDocument>(
   {
     userId: { type: Schema.Types.ObjectId, ref: "user", required: true },
+    sessionId: { type: Schema.Types.ObjectId, ref: "timetablely_session", required: true },
     name: { type: String, required: true, trim: true },
-    description: { type: String },
     columnCount: { type: Number, required: true, default: 8 },
     defaultSlotDuration: { type: Number, default: 45 },
+    startTime: { type: String, default: "08:00" },
     columns: { type: [columnConfigSchema], default: [] },
     cells: { type: [cellDataSchema], default: [] },
+    isGenerated: { type: Boolean, default: false },
+    generatedAt: { type: Date },
+    generationType: { type: String, enum: ["standard", "ai"] },
   },
   { timestamps: true }
 );
 
-templateSchema.index({ userId: 1 });
+timetableSchema.index({ userId: 1 });
+timetableSchema.index({ userId: 1, sessionId: 1 });
 
-export const Template = model<ITemplateDocument>("timetablely_template", templateSchema);
+export const Timetable = model<ITimetableDocument>("timetablely_timetable", timetableSchema);
