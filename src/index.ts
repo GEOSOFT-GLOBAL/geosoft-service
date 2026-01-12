@@ -1,9 +1,9 @@
 import cors from "cors";
 import color from "colors";
 import morgan from "morgan";
-import pagesRouter from "./routes/pages.route";
 import { rootRouter } from "./routes";
 import { connectDB } from "./config/db";
+import pagesRouter from "./routes/pages.route";
 import express, { Application, json } from "express";
 import errorHandler from "./middlewares/error.middleware";
 import { ALLOWED_ORIGINS, PORT } from "./config/constants";
