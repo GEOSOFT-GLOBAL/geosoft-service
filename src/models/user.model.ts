@@ -77,6 +77,9 @@ const userSchema = new Schema<IUserDocument, Model<IUserDocument>, IUser>(
       type: Number,
       default: 0,
     },
+    lastLogin: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );

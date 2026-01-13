@@ -105,6 +105,7 @@ export class AuthController {
           ];
         }
 
+        user.lastLogin = new Date();
         await user.save();
       } else {
         // Create new user
@@ -266,6 +267,10 @@ export class AuthController {
           status: 401,
         });
       }
+
+      // Update last login
+      user.lastLogin = new Date();
+      await user.save();
 
       const accessToken = await generateAccessToken({
         user_id: user._id.toString(),
