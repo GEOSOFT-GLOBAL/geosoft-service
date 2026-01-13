@@ -159,8 +159,15 @@ export class AuthController {
 
   public static async signup(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password, username, firstname, lastname, appSource } =
-        req.body;
+      const {
+        email,
+        password,
+        username,
+        firstname,
+        lastname,
+        appSource,
+        linkAccount,
+      } = req.body;
 
       if (!email || !password || !username || !appSource) {
         throw new APIError({
@@ -176,20 +183,98 @@ export class AuthController {
         });
       }
 
-      const existingUser = await User.findOne({
-        $or: [{ email }, { username }],
-      });
+      // Check for existing user with same email
+      const existingUserByEmail = await User.findOne({ email });
 
-      if (existingUser) {
+      if (existingUserByEmail) {
+        // Check if already registered for this app
+        if (existingUserByEmail.registeredApps?.includes(appSource)) {
+          throw new APIError({
+            message: "Email already registered for this app",
+            status: 409,
+          });
+        }
+
+        // Email exists for different app - offer account linking
+        if (linkAccount === undefined) {
+          throw new APIError({
+            message: "Account exists with this email for another app",
+            status: 409,
+            code: "ACCOUNT_EXISTS_LINK_PROMPT",
+            errorData: {
+              existingApps: existingUserByEmail.registeredApps,
+              prompt:
+                "An account with this email exists. Would you like to link your accounts (same password for all apps) or create an independent account?",
+            },
+          });
+        }
+
+        if (linkAccount === true) {
+          // Link account - verify password matches existing account
+          const isMatch = await existingUserByEmail.comparePassword(password);
+          if (!isMatch) {
+            throw new APIError({
+              message:
+                "Password does not match existing account. Use the same password to link accounts.",
+              status: 401,
+            });
+          }
+
+          // Add app to registeredApps
+          existingUserByEmail.registeredApps = [
+            ...(existingUserByEmail.registeredApps || []),
+            appSource as AppSource,
+          ];
+          await existingUserByEmail.save();
+
+          const accessToken = await generateAccessToken({
+            user_id: existingUserByEmail._id.toString(),
+            email: existingUserByEmail.email,
+            username: existingUserByEmail.username,
+            role: existingUserByEmail.role,
+          });
+
+          return res.status(200).json(
+            createResponse({
+              status: 200,
+              success: true,
+              message: "Account linked successfully",
+              data: {
+                user: {
+                  id: existingUserByEmail._id,
+                  email: existingUserByEmail.email,
+                  username: existingUserByEmail.username,
+                  firstname: existingUserByEmail.firstname,
+                  lastname: existingUserByEmail.lastname,
+                  role: existingUserByEmail.role,
+                  plan: existingUserByEmail.plan,
+                  registeredApps: existingUserByEmail.registeredApps,
+                },
+                accessToken,
+                linked: true,
+              },
+            })
+          );
+        }
+
+        // linkAccount === false - create independent account with different email requirement
         throw new APIError({
           message:
-            existingUser.email === email
-              ? "Email already in use"
-              : "Username already taken",
+            "To create an independent account, please use a different email address",
           status: 409,
         });
       }
 
+      // Check for existing username
+      const existingUserByUsername = await User.findOne({ username });
+      if (existingUserByUsername) {
+        throw new APIError({
+          message: "Username already taken",
+          status: 409,
+        });
+      }
+
+      // Create new user
       const user = await new User({
         email,
         password,
@@ -222,8 +307,10 @@ export class AuthController {
               lastname: user.lastname,
               role: user.role,
               plan: user.plan,
+              registeredApps: user.registeredApps,
             },
             accessToken,
+            linked: false,
           },
         })
       );

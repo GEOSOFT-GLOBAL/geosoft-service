@@ -10,6 +10,7 @@ class HttpException extends Error {
   isOperational: boolean;
   isPublic: boolean | undefined = false;
   errorData?: Record<string, any> | null = null;
+  code?: string;
 
   constructor({
     stack,
@@ -17,7 +18,8 @@ class HttpException extends Error {
     message,
     isPublic,
     errorData,
-  }: HttpExceptionInterface) {
+    code,
+  }: HttpExceptionInterface & { code?: string }) {
     super(message);
     this.stack = stack;
     this.status = status;
@@ -25,6 +27,7 @@ class HttpException extends Error {
     this.isPublic = isPublic;
     this.isOperational = true; // This is required since bluebird 4 doesn't append it anymore.
     this.errorData = errorData;
+    this.code = code;
     this.name = this.constructor.name;
   }
 }
@@ -42,6 +45,7 @@ class APIError extends HttpException {
    * @param {string | undefined} stack - call stack trace for error.
    * @param {number} status - HTTP status code of error.
    * @param {boolean} isPublic - Whether the message should be visible to user or not.
+   * @param {string} code - Error code for frontend handling.
    */
 
   constructor({
@@ -50,13 +54,15 @@ class APIError extends HttpException {
     errorData,
     isPublic = false,
     status = httpStatus.INTERNAL_SERVER_ERROR,
-  }: HttpExceptionInterface) {
+    code,
+  }: HttpExceptionInterface & { code?: string }) {
     super({
       stack,
       status,
       message,
       isPublic,
       errorData,
+      code,
     });
   }
 }
