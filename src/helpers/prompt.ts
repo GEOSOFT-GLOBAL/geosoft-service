@@ -8,6 +8,7 @@ interface AppPromptConfig {
   systemInstructions: string;
   context: string;
   capabilities: string[];
+  apiKey: string;
 }
 
 const APP_PROMPTS: Record<AppType, AppPromptConfig> = {
@@ -28,6 +29,7 @@ Your role is to help users create, optimize, and manage academic timetables effi
       "Handle multiple sessions and classes",
       "Apply scheduling rules and preferences",
     ],
+    apiKey: process.env.TIMETABLELY_GEMINI_API_KEY || "",
   },
 
   [AppType.DOCXIQ]: {
@@ -47,6 +49,7 @@ Your role is to help users analyze, extract, and manipulate document content eff
       "Generate document summaries",
       "Extract metadata and key information",
     ],
+    apiKey: process.env.DOCXIQ_GEMINI_API_KEY || "",
   },
 
   [AppType.LINKSHYFT]: {
@@ -66,6 +69,7 @@ Your role is to help users create, manage, and analyze shortened links and QR co
       "Manage custom domains",
       "Provide link insights and statistics",
     ],
+    apiKey: process.env.LINKSHYFT_GEMINI_API_KEY || "",
   },
 };
 
@@ -100,7 +104,7 @@ export const buildPrompt = ({
     sections.push(
       ``,
       `# Capabilities`,
-      ...appConfig.capabilities.map((cap) => `- ${cap}`)
+      ...appConfig.capabilities.map((cap) => `- ${cap}`),
     );
   }
 
@@ -135,4 +139,15 @@ export const getAppCapabilities = (appType: AppType): string[] => {
     throw new Error(`Invalid app type: ${appType}`);
   }
   return appConfig.capabilities;
+};
+
+export const getAppApiKey = (appType: AppType): string => {
+  const appConfig = APP_PROMPTS[appType];
+  if (!appConfig) {
+    throw new Error(`Invalid app type: ${appType}`);
+  }
+  if (!appConfig.apiKey) {
+    throw new Error(`API key not configured for app type: ${appType}`);
+  }
+  return appConfig.apiKey;
 };

@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { buildPrompt, AppType } from "../helpers/prompt";
+import { buildPrompt, AppType, getAppApiKey } from "../helpers/prompt";
 import APIError from "../helpers/api.error";
 import { createResponse } from "../helpers/response";
+import { search } from "../services/gemini.service";
 
 interface GeneratePromptRequest {
   appType: AppType;
@@ -46,13 +47,21 @@ export const generatePrompt = async (
       additionalContext,
     });
 
+    const apiKey = getAppApiKey(appType);
+
+    // Make request to Gemini
+    const geminiResponse = await search({
+      prompt: fullPrompt,
+      apiKey,
+    });
+
     return res.status(200).json(
       createResponse({
         status: 200,
         success: true,
-        message: "Prompt generated successfully",
+        message: "AI response generated successfully",
         data: {
-          prompt: fullPrompt,
+          response: geminiResponse,
           appType,
         },
       }),

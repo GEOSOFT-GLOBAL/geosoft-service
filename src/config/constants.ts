@@ -32,4 +32,7 @@ export const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET || "";
 
 export const BROWSERLESS_TOKEN = process.env.BROWSERLESS_TOKEN;
 
-export const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+// export const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+export const DOCXIQ_GEMINI_API_KEY = process.env.DOCXIQ_GEMINI_API_KEY;
+export const LINKSHYFT_GEMINI_API_KEY = process.env.LINKSHYFT_GEMINI_API_KEY;
+export const TIMETABLELY_GEMINI_API_KEY = process.env.TIMETABLELY_GEMINI_API_KEY;
