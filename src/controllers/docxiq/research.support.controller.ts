@@ -8,15 +8,10 @@ import { getAppApiKey, AppType } from "../../helpers/prompt";
 export const generateCitation = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
-    const {
-      sourceType,
-      citationStyle,
-      sourceInfo,
-      useAI = true,
-    } = req.body;
+    const { sourceType, citationStyle, sourceInfo, useAI = true } = req.body;
 
     if (!sourceType || !citationStyle || !sourceInfo) {
       throw new APIError({
@@ -50,7 +45,7 @@ ${sourceInfo}
 Please provide ONLY the formatted citation, nothing else. Follow ${styleNames[citationStyle] || citationStyle} guidelines exactly.`;
 
     const apiKey = getAppApiKey(AppType.DOCXIQ);
-    const result = await search({ prompt, apiKey });
+    const response = await search({ prompt, apiKey });
 
     return res.status(200).json(
       createResponse({
@@ -58,11 +53,11 @@ Please provide ONLY the formatted citation, nothing else. Follow ${styleNames[ci
         success: true,
         message: "Citation generated successfully",
         data: {
-          citation: result.trim(),
+          citation: response.text || "",
           sourceType,
           citationStyle,
         },
-      })
+      }),
     );
   } catch (error) {
     next(error);
@@ -73,7 +68,7 @@ Please provide ONLY the formatted citation, nothing else. Follow ${styleNames[ci
 export const generateCitationFromDocument = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { documentContent, documentName, citationStyle, pdfMetadata } =
@@ -127,7 +122,7 @@ If information is missing, make reasonable inferences from the content or use [U
 Output ONLY the formatted citation, nothing else.`;
 
     const apiKey = getAppApiKey(AppType.DOCXIQ);
-    const result = await search({ prompt, apiKey });
+    const response = await search({ prompt, apiKey });
 
     return res.status(200).json(
       createResponse({
@@ -135,10 +130,10 @@ Output ONLY the formatted citation, nothing else.`;
         success: true,
         message: "Citation generated from document successfully",
         data: {
-          citation: result.trim(),
+          citation: response.text || "",
           citationStyle,
         },
-      })
+      }),
     );
   } catch (error) {
     next(error);
@@ -149,7 +144,7 @@ Output ONLY the formatted citation, nothing else.`;
 export const generateCitationFromURL = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { url, citationStyle } = req.body;
@@ -183,7 +178,7 @@ Please:
 Output ONLY the formatted citation, nothing else.`;
 
     const apiKey = getAppApiKey(AppType.DOCXIQ);
-    const result = await search({ prompt, apiKey });
+    const response = await search({ prompt, apiKey });
 
     return res.status(200).json(
       createResponse({
@@ -191,10 +186,10 @@ Output ONLY the formatted citation, nothing else.`;
         success: true,
         message: "Citation generated from URL successfully",
         data: {
-          citation: result.trim(),
+          citation: response.text || "",
           citationStyle,
         },
-      })
+      }),
     );
   } catch (error) {
     next(error);
@@ -205,7 +200,7 @@ Output ONLY the formatted citation, nothing else.`;
 export const convertCitations = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { citations, sourceStyle, targetStyle } = req.body;
@@ -242,7 +237,7 @@ ${citations}
 Please convert each citation to ${styleNames[targetStyle] || targetStyle} format. Maintain the same order. Output ONLY the converted citations, one per line, with no additional text or explanations.`;
 
     const apiKey = getAppApiKey(AppType.DOCXIQ);
-    const result = await search({ prompt, apiKey });
+    const response = await search({ prompt, apiKey });
 
     return res.status(200).json(
       createResponse({
@@ -250,11 +245,11 @@ Please convert each citation to ${styleNames[targetStyle] || targetStyle} format
         success: true,
         message: "Citations converted successfully",
         data: {
-          convertedCitations: result.trim(),
+          convertedCitations: response.text || "",
           sourceStyle,
           targetStyle,
         },
-      })
+      }),
     );
   } catch (error) {
     next(error);
@@ -265,7 +260,7 @@ Please convert each citation to ${styleNames[targetStyle] || targetStyle} format
 export const extractKeywords = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { text, topN = 20 } = req.body;
@@ -289,7 +284,7 @@ ${text}
 Format your response as a JSON array with objects containing: keyword, score, context`;
 
     const apiKey = getAppApiKey(AppType.DOCXIQ);
-    const result = await search({ prompt, apiKey });
+    const response = await search({ prompt, apiKey });
 
     return res.status(200).json(
       createResponse({
@@ -297,9 +292,9 @@ Format your response as a JSON array with objects containing: keyword, score, co
         success: true,
         message: "Keywords extracted successfully",
         data: {
-          keywords: result.trim(),
+          keywords: response.text || "",
         },
-      })
+      }),
     );
   } catch (error) {
     next(error);
@@ -310,7 +305,7 @@ Format your response as a JSON array with objects containing: keyword, score, co
 export const getSEOSuggestions = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { text, currentKeywords } = req.body;
@@ -342,7 +337,7 @@ Please provide:
 Format your response in a clear, actionable way with specific keyword suggestions.`;
 
     const apiKey = getAppApiKey(AppType.DOCXIQ);
-    const result = await search({ prompt, apiKey });
+    const response = await search({ prompt, apiKey });
 
     return res.status(200).json(
       createResponse({
@@ -350,9 +345,9 @@ Format your response in a clear, actionable way with specific keyword suggestion
         success: true,
         message: "SEO suggestions generated successfully",
         data: {
-          suggestions: result.trim(),
+          suggestions: response.text || "",
         },
-      })
+      }),
     );
   } catch (error) {
     next(error);
@@ -363,7 +358,7 @@ Format your response in a clear, actionable way with specific keyword suggestion
 export const summarizeText = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const {
@@ -400,7 +395,7 @@ Text to summarize:
 ${text}`;
 
     const apiKey = getAppApiKey(AppType.DOCXIQ);
-    const result = await search({ prompt, apiKey });
+    const response = await search({ prompt, apiKey });
 
     return res.status(200).json(
       createResponse({
@@ -408,12 +403,12 @@ ${text}`;
         success: true,
         message: "Text summarized successfully",
         data: {
-          summary: result.trim(),
+          summary: response.text || "",
           summaryLength,
           summaryFormat,
           detailLevel,
         },
-      })
+      }),
     );
   } catch (error) {
     next(error);
