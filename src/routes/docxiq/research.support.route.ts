@@ -1,27 +1,19 @@
 import { Router } from "express";
-import {
-  generateCitation,
-  generateCitationFromDocument,
-  generateCitationFromURL,
-  convertCitations,
-  extractKeywords,
-  getSEOSuggestions,
-  summarizeText,
-} from "../../controllers/docxiq/research.support.controller";
+import { ResearchSupportController } from "../../controllers/docxiq/research.support.controller";
 
 const router = Router();
 
 // Citation endpoints
-router.post("/citation/generate", generateCitation);
-router.post("/citation/from-document", generateCitationFromDocument);
-router.post("/citation/from-url", generateCitationFromURL);
-router.post("/citation/convert", convertCitations);
+router.post("/citation/generate", ResearchSupportController.generateCitation);
+router.post("/citation/from-document", ResearchSupportController.generateCitationFromDocument);
+router.post("/citation/from-url", ResearchSupportController.generateCitationFromURL);
+router.post("/citation/convert", ResearchSupportController.convertCitations);
 
 // Keyword endpoints
-router.post("/keywords/extract", extractKeywords);
-router.post("/keywords/seo-suggestions", getSEOSuggestions);
+router.post("/keywords/extract", ResearchSupportController.extractKeywords);
+router.post("/keywords/seo-suggestions", ResearchSupportController.getSEOSuggestions);
 
 // Summarization endpoint
-router.post("/summarize", summarizeText);
+router.post("/summarize", ResearchSupportController.summarizeText);
 
 export { router as ResearchSupportRouter };
