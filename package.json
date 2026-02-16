@@ -35,6 +35,7 @@
   "homepage": "https://github.com/GEOSOFT-GLOBAL/geosoft-service#readme",
   "dependencies": {
     "@google/genai": "^1.34.0",
+    "adm-zip": "^0.5.16",
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.8.0",
     "cors": "^2.8.5",
@@ -51,6 +52,7 @@
     "uuid": "^13.0.0"
   },
   "devDependencies": {
+    "@types/adm-zip": "^0.5.7",
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
