@@ -43,6 +43,9 @@ export interface IUser {
   plan?: UserPlan;
   apiQuota?: number;
   usedQuota?: number;
+  // Password reset
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
 }
 
 export interface IUserDocument extends IUser, Document {

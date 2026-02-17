@@ -80,6 +80,12 @@ const userSchema = new Schema<IUserDocument, Model<IUserDocument>, IUser>(
     lastLogin: {
       type: Date,
     },
+    resetPasswordToken: {
+      type: String,
+    },
+    resetPasswordExpires: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );
