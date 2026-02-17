@@ -18,7 +18,7 @@ export class AuthController {
   public static async initGOAuth(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) {
     try {
       const authUrl = oauth2Client.generateAuthUrl({
@@ -32,7 +32,7 @@ export class AuthController {
           success: true,
           message: "Auth URL generated",
           data: { authUrl },
-        })
+        }),
       );
     } catch (error) {
       next(error);
@@ -42,7 +42,7 @@ export class AuthController {
   public static async GOCallback(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) {
     try {
       const { code } = req.query;
@@ -152,7 +152,7 @@ export class AuthController {
             },
             accessToken,
           },
-        })
+        }),
       );
     } catch (error) {
       next(error);
@@ -255,7 +255,7 @@ export class AuthController {
                 accessToken,
                 linked: true,
               },
-            })
+            }),
           );
         }
 
@@ -314,7 +314,7 @@ export class AuthController {
             accessToken,
             linked: false,
           },
-        })
+        }),
       );
     } catch (error) {
       next(error);
@@ -386,7 +386,7 @@ export class AuthController {
             },
             accessToken,
           },
-        })
+        }),
       );
     } catch (error) {
       next(error);
@@ -396,7 +396,7 @@ export class AuthController {
   public static async verifyAccount(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) {
     try {
       const { userId } = req.body;
@@ -411,7 +411,7 @@ export class AuthController {
           success: true,
           message: "User verified successfully",
           data: user,
-        })
+        }),
       );
     } catch (error) {
       next(error);
@@ -421,7 +421,7 @@ export class AuthController {
   public static async forgotPassword(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       const { email, appSource } = req.body;
@@ -457,7 +457,7 @@ export class AuthController {
               message:
                 "If an account exists with this email, you will receive a password reset link",
               data: null,
-            })
+            }),
           );
           return;
         }
@@ -481,7 +481,7 @@ export class AuthController {
           await sendPasswordResetEmail(
             email,
             resetToken,
-            (appSource as AppSource) || user.appSource
+            (appSource as AppSource) || user.appSource,
           );
         } catch (emailError) {
           // Log error but don't expose to user
@@ -497,7 +497,7 @@ export class AuthController {
           message:
             "If an account exists with this email, you will receive a password reset link",
           data: null,
-        })
+        }),
       );
     } catch (error) {
       next(error);
