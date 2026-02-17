@@ -74,6 +74,16 @@ CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 
+# Email Service (for password reset)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_app_password
+EMAIL_FROM=your_email@gmail.com
+
+# Frontend URLs (for password reset links)
+FRONTEND_URL=http://localhost:5173
+
 # Gemini API Keys (one per app)
 TIMETABLELY_GEMINI_API_KEY=your_timetablely_key
 DOCXIQ_GEMINI_API_KEY=your_docxiq_key
