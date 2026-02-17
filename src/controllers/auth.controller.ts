@@ -6,7 +6,7 @@ import { google } from "googleapis";
 import { User } from "../models/user.model";
 import { AuthProvider, AppSource } from "../interfaces/user";
 import { generateAccessToken } from "../services/jwt.service";
-import { generateResetToken, hashToken } from "../helpers/token.helper";
+import { generateResetToken, hashToken, verifyTokenHash } from "../helpers/token.helper";
 import { sendPasswordResetEmail } from "../services/email.service";
 
 const SCOPES = [
@@ -496,6 +496,87 @@ export class AuthController {
           success: true,
           message:
             "If an account exists with this email, you will receive a password reset link",
+          data: null,
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public static async resetPassword(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const { token, password } = req.body;
+
+      // Validate required fields
+      if (!token || typeof token !== "string") {
+        throw new APIError({
+          message: "Reset token is required",
+          status: 400,
+        });
+      }
+
+      if (!password || typeof password !== "string") {
+        throw new APIError({
+          message: "Password is required",
+          status: 400,
+        });
+      }
+
+      // Validate password meets minimum requirements (8 characters)
+      if (password.length < 8) {
+        throw new APIError({
+          message: "Password must be at least 8 characters long",
+          status: 400,
+        });
+      }
+
+      // Hash the provided token
+      const hashedToken = hashToken(token);
+
+      // Find user with matching token hash
+      const user = await User.findOne({
+        resetPasswordToken: hashedToken,
+      });
+
+      if (!user) {
+        throw new APIError({
+          message: "Invalid or expired reset token",
+          status: 400,
+        });
+      }
+
+      // Check token expiration
+      if (!user.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
+        throw new APIError({
+          message: "Reset token has expired. Please request a new password reset",
+          status: 400,
+        });
+      }
+
+      // Update user password (will be auto-hashed by User model pre-save hook)
+      user.password = password;
+
+      // Clear reset token fields
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpires = undefined;
+
+      // Update lastLogin timestamp
+      user.lastLogin = new Date();
+
+      // Save user
+      await user.save();
+
+      // Return success response
+      res.json(
+        createResponse({
+          status: 200,
+          success: true,
+          message: "Password reset successful",
           data: null,
         }),
       );
