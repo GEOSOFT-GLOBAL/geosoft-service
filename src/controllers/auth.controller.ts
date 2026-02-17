@@ -6,6 +6,8 @@ import { google } from "googleapis";
 import { User } from "../models/user.model";
 import { AuthProvider, AppSource } from "../interfaces/user";
 import { generateAccessToken } from "../services/jwt.service";
+import { generateResetToken, hashToken } from "../helpers/token.helper";
+import { sendPasswordResetEmail } from "../services/email.service";
 
 const SCOPES = [
   "https://www.googleapis.com/auth/userinfo.email",
@@ -409,6 +411,92 @@ export class AuthController {
           success: true,
           message: "User verified successfully",
           data: user,
+        })
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public static async forgotPassword(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { email, appSource } = req.body;
+
+      // Validate email format
+      if (!email || typeof email !== "string") {
+        throw new APIError({
+          message: "Valid email is required",
+          status: 400,
+        });
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        throw new APIError({
+          message: "Invalid email format",
+          status: 400,
+        });
+      }
+
+      // Find user by email
+      const user = await User.findOne({ email: email.toLowerCase() });
+
+      // If user exists, check auth provider and process reset
+      if (user) {
+        // Check if user has OAuth-only authentication
+        if (user.authProvider === AuthProvider.GOOGLE && !user.password) {
+          // Return generic success message (don't reveal user exists)
+          res.json(
+            createResponse({
+              status: 200,
+              success: true,
+              message:
+                "If an account exists with this email, you will receive a password reset link",
+              data: null,
+            })
+          );
+          return;
+        }
+
+        // User has local auth or both - proceed with password reset
+        // Generate reset token
+        const resetToken = generateResetToken();
+        const hashedToken = hashToken(resetToken);
+
+        // Set expiration to 1 hour from now
+        const expirationTime = new Date();
+        expirationTime.setHours(expirationTime.getHours() + 1);
+
+        // Invalidate any existing reset tokens and store new one
+        user.resetPasswordToken = hashedToken;
+        user.resetPasswordExpires = expirationTime;
+        await user.save();
+
+        // Send password reset email
+        try {
+          await sendPasswordResetEmail(
+            email,
+            resetToken,
+            (appSource as AppSource) || user.appSource
+          );
+        } catch (emailError) {
+          // Log error but don't expose to user
+          console.error("Failed to send password reset email:", emailError);
+        }
+      }
+
+      // Always return generic success message (prevent email enumeration)
+      res.json(
+        createResponse({
+          status: 200,
+          success: true,
+          message:
+            "If an account exists with this email, you will receive a password reset link",
+          data: null,
         })
       );
     } catch (error) {
