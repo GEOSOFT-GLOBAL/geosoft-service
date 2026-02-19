@@ -87,7 +87,7 @@ const userSchema = new Schema<IUserDocument, Model<IUserDocument>, IUser>(
       type: Date,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 userSchema.pre<IUserDocument>("save", async function () {
@@ -96,7 +96,7 @@ userSchema.pre<IUserDocument>("save", async function () {
 });
 
 userSchema.methods.comparePassword = async function (
-  candidatePassword: string
+  candidatePassword: string,
 ) {
   if (!this.password) return false;
   return compare(candidatePassword, this.password);

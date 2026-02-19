@@ -1,18 +1,13 @@
 import { NextFunction, Request, Response } from "express";
-import { oauth2Client } from "../services/google.service";
+import { generateAuthUrl, getToken, getUserInfo } from "../services/google.service";
 import { createResponse } from "../helpers/response";
 import APIError from "../helpers/api.error";
-import { google } from "googleapis";
 import { User } from "../models/user.model";
 import { AuthProvider, AppSource } from "../interfaces/user";
 import { generateAccessToken } from "../services/jwt.service";
 import { generateResetToken, hashToken, verifyTokenHash } from "../helpers/token.helper";
 import { sendPasswordResetEmail } from "../services/email.service";
-
-const SCOPES = [
-  "https://www.googleapis.com/auth/userinfo.email",
-  "https://www.googleapis.com/auth/userinfo.profile",
-];
+import { getRedirectUriByAppSource } from "../config/constants";
 
 export class AuthController {
   public static async initGOAuth(
@@ -21,17 +16,25 @@ export class AuthController {
     next: NextFunction,
   ) {
     try {
-      const authUrl = oauth2Client.generateAuthUrl({
-        access_type: "offline",
-        scope: SCOPES,
-        prompt: "consent",
-      });
+      const { appSource } = req.query;
+
+      if (
+        !appSource ||
+        !Object.values(AppSource).includes(appSource as AppSource)
+      ) {
+        throw new APIError({
+          message: "Valid appSource is required. Must be one of: timetablely, docxiq, linkshyft",
+          status: 400,
+        });
+      }
+
+      const { authUrl, state } = generateAuthUrl(appSource as AppSource);
       res.json(
         createResponse({
           status: 200,
           success: true,
           message: "Auth URL generated",
-          data: { authUrl },
+          data: { authUrl, state },
         }),
       );
     } catch (error) {
@@ -45,7 +48,7 @@ export class AuthController {
     next: NextFunction,
   ) {
     try {
-      const { code } = req.query;
+      const { code, appSource } = req.query;
 
       if (!code || typeof code !== "string") {
         throw new APIError({
@@ -54,28 +57,28 @@ export class AuthController {
         });
       }
 
-      const { tokens } = await oauth2Client.getToken(code);
-      oauth2Client.setCredentials(tokens);
-
-      const oauth2 = google.oauth2({ version: "v2", auth: oauth2Client });
-
-      const { data: googleUser } = await oauth2.userinfo.get();
-
-      if (!googleUser.email || !googleUser.id) {
-        throw new APIError({
-          message: "Failed to get user info from Google",
-          status: 400,
-        });
-      }
-
-      const { appSource } = req.query;
-
       if (
         !appSource ||
         !Object.values(AppSource).includes(appSource as AppSource)
       ) {
         throw new APIError({
           message: "Valid appSource is required",
+          status: 400,
+        });
+      }
+
+      // Get the redirect URI for this appSource
+      const redirectUri = getRedirectUriByAppSource(appSource as string);
+
+      // Exchange code for tokens with redirect URI validation
+      const { tokens, oauth2Client } = await getToken(code, redirectUri, appSource as string);
+
+      // Get user info from Google
+      const googleUser = await getUserInfo(oauth2Client);
+
+      if (!googleUser.email || !googleUser.id) {
+        throw new APIError({
+          message: "Failed to get user info from Google",
           status: 400,
         });
       }
