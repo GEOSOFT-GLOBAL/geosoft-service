@@ -5,6 +5,7 @@ import { createResponse } from "../../helpers/response";
 import APIError from "../../helpers/api.error";
 import { OtpToken } from "../../models/ng-tax/otp-token.model";
 import { IOtpToken } from "../../interfaces/token";
+import { sendOtpEmail } from "../../services/email.service";
 
 /** Generates a random 6-digit numeric OTP code */
 function generateOtpCode(): string {
@@ -51,18 +52,24 @@ export class OtpController {
 
       const token = await OtpToken.create({ code, userId, type, expiresAt });
 
+      // Send OTP via email (fire-and-forget; errors are logged but not surfaced to the caller)
+      try {
+        await sendOtpEmail(req.user!.email, code, type, OTP_TTL_MINUTES);
+      } catch (emailError) {
+        console.error("Failed to send OTP email:", emailError);
+      }
+
       const isDev = process.env.NODE_ENV !== "production";
 
       res.status(201).json(
         createResponse({
           status: 201,
           success: true,
-          message: "OTP generated successfully",
+          message: "OTP sent to your email address",
           data: {
             tokenId: token._id,
             expiresAt: token.expiresAt,
-            // NOTE: In production, send the code via email/SMS — do NOT return it here.
-            // Exposed here only for development / testing convenience.
+            // Exposed only in non-production for testing convenience
             ...(isDev && { code }),
           },
         }),
