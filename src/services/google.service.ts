@@ -8,6 +8,8 @@ import {
   DOCXIQ_GOOGLE_CLIENT_SECRET,
   LINKSHYFT_GOOGLE_CLIENT_ID,
   LINKSHYFT_GOOGLE_CLIENT_SECRET,
+  NGTAX_GOOGLE_CLIENT_ID,
+  NGTAX_GOOGLE_CLIENT_SECRET,
   getRedirectUriByAppSource,
 } from "../config/constants";
 import { AppSource } from "../interfaces/user";
@@ -21,6 +23,8 @@ const getCredentialsByAppSource = (appSource: string) => {
       return { clientId: DOCXIQ_GOOGLE_CLIENT_ID, clientSecret: DOCXIQ_GOOGLE_CLIENT_SECRET };
     case "linkshyft":
       return { clientId: LINKSHYFT_GOOGLE_CLIENT_ID, clientSecret: LINKSHYFT_GOOGLE_CLIENT_SECRET };
+    case "ngtax":
+      return { clientId: NGTAX_GOOGLE_CLIENT_ID, clientSecret: NGTAX_GOOGLE_CLIENT_SECRET };
     default:
       return { clientId: GOOGLE_CLIENT_ID, clientSecret: GOOGLE_CLIENT_SECRET };
   }
@@ -91,6 +95,7 @@ export const getToken = async (code: string, redirectUri: string, appSource?: st
     getRedirectUriByAppSource("timetablely"),
     getRedirectUriByAppSource("docxiq"),
     getRedirectUriByAppSource("linkshyft"),
+    getRedirectUriByAppSource("ngtax"),
   ];
 
   if (!allowedRedirectUris.includes(redirectUri)) {
@@ -106,6 +111,7 @@ export const getToken = async (code: string, redirectUri: string, appSource?: st
     if (redirectUri === getRedirectUriByAppSource("timetablely")) credentials = getCredentialsByAppSource("timetablely");
     else if (redirectUri === getRedirectUriByAppSource("docxiq")) credentials = getCredentialsByAppSource("docxiq");
     else if (redirectUri === getRedirectUriByAppSource("linkshyft")) credentials = getCredentialsByAppSource("linkshyft");
+    else if (redirectUri === getRedirectUriByAppSource("ngtax")) credentials = getCredentialsByAppSource("ngtax");
     else credentials = { clientId: GOOGLE_CLIENT_ID, clientSecret: GOOGLE_CLIENT_SECRET };
   }
 

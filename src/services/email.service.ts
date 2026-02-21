@@ -74,6 +74,7 @@ const getFrontendUrl = (appSource: AppSource): string => {
     [AppSource.DOCXIQ]: "https://www.docxiq.com",
     [AppSource.LINKSHYFT]: "https://www.linkshyft.com",
     [AppSource.TICKLY]: "https://www.tickly.com",
+    [AppSource.NGTAX]: "https://www.ngtax.app",
   };
 
   return urlMap[appSource] || FRONTEND_URL;

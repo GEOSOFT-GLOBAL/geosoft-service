@@ -5,6 +5,7 @@ export enum AppSource {
   DOCXIQ = "docxiq",
   LINKSHYFT = "linkshyft",
   TICKLY = "tickly",
+  NGTAX = "ngtax",
 }
 
 export enum AuthProvider {

@@ -38,12 +38,16 @@ export const DOCXIQ_GOOGLE_CLIENT_SECRET = process.env.DOCXIQ_GOOGLE_CLIENT_SECR
 export const LINKSHYFT_GOOGLE_CLIENT_ID = process.env.LINKSHYFT_GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID;
 export const LINKSHYFT_GOOGLE_CLIENT_SECRET = process.env.LINKSHYFT_GOOGLE_CLIENT_SECRET || GOOGLE_CLIENT_SECRET;
 
+export const NGTAX_GOOGLE_CLIENT_ID = process.env.NGTAX_GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID;
+export const NGTAX_GOOGLE_CLIENT_SECRET = process.env.NGTAX_GOOGLE_CLIENT_SECRET || GOOGLE_CLIENT_SECRET;
+
 export const REDIRECT_URI = process.env.REDIRECT_URI || "";
 
 // Multi-app redirect URIs
 export const TIMETABLELY_REDIRECT_URI = process.env.TIMETABLELY_REDIRECT_URI || "http://localhost:5173/auth/google/callback";
 export const DOCXIQ_REDIRECT_URI = process.env.DOCXIQ_REDIRECT_URI || "http://localhost:5174/auth/google/callback";
 export const LINKSHYFT_REDIRECT_URI = process.env.LINKSHYFT_REDIRECT_URI || "http://localhost:5175/auth/google/callback";
+export const NGTAX_REDIRECT_URI = process.env.NGTAX_REDIRECT_URI || "http://localhost:5176/auth/google/callback";
 
 // Helper function to get redirect URI by appSource
 export const getRedirectUriByAppSource = (appSource: string): string => {
@@ -54,6 +58,8 @@ export const getRedirectUriByAppSource = (appSource: string): string => {
       return DOCXIQ_REDIRECT_URI;
     case "linkshyft":
       return LINKSHYFT_REDIRECT_URI;
+    case "ngtax":
+      return NGTAX_REDIRECT_URI;
     default:
       return REDIRECT_URI; // Fallback to default
   }
