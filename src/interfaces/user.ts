@@ -39,6 +39,7 @@ export interface IUser {
   // Multi-app support
   appSource: AppSource;
   registeredApps?: AppSource[];
+  isActive?: boolean;
   // AI credits & plan
   plan?: UserPlan;
   apiQuota?: number;
