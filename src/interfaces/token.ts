@@ -1,8 +1,8 @@
-import { ObjectId } from "mongoose";
+import { Types } from "mongoose";
 
 export interface IOtpToken extends Document {
   code: string;
-  userId: ObjectId;
+  userId: Types.ObjectId;
   type: 'email_verification' | 'password_reset';
   expiresAt: Date;
   usedAt?: Date;

@@ -1,4 +1,4 @@
-import { Document, ObjectId } from "mongoose";
+import { Document, Types } from "mongoose";
 
 export interface IncomeSource {
   id: string;
@@ -20,7 +20,7 @@ export interface BracketCalculation {
 }
 
 export interface ITaxData extends Document {
-  userId: ObjectId;
+  userId: Types.ObjectId;
   taxYear: number;
   
   // Income Sources (array of IncomeSource objects)
