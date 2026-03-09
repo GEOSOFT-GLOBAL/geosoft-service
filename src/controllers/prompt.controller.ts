@@ -8,8 +8,8 @@ import {
   getAppCapabilities,
 } from "../helpers/prompt";
 import APIError from "../helpers/api.error";
-import { createResponse } from "../helpers/response";
 import { search } from "../services/gemini.service";
+import { createResponse } from "../helpers/response";
 
 interface GeneratePromptRequest {
   appType: AppType;

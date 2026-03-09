@@ -1,13 +1,13 @@
-import { NextFunction, Request, Response } from "express";
-import { generateAuthUrl, getToken, getUserInfo } from "../services/google.service";
-import { createResponse } from "../helpers/response";
 import APIError from "../helpers/api.error";
 import { User } from "../models/user.model";
+import { createResponse } from "../helpers/response";
+import { NextFunction, Request, Response } from "express";
 import { AuthProvider, AppSource } from "../interfaces/user";
 import { generateAccessToken } from "../services/jwt.service";
-import { generateResetToken, hashToken, verifyTokenHash } from "../helpers/token.helper";
-import { sendPasswordResetEmail } from "../services/email.service";
 import { getRedirectUriByAppSource } from "../config/constants";
+import { sendPasswordResetEmail } from "../services/email.service";
+import { generateAuthUrl, getToken, getUserInfo } from "../services/google.service";
+import { generateResetToken, hashToken, verifyTokenHash } from "../helpers/token.helper";
 
 export class AuthController {
   public static async initGOAuth(

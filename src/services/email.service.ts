@@ -1,4 +1,3 @@
-import nodemailer, { Transporter } from "nodemailer";
 import {
   EMAIL_HOST,
   EMAIL_PORT,
@@ -8,6 +7,7 @@ import {
   FRONTEND_URL,
 } from "../config/constants";
 import { AppSource } from "../interfaces/user";
+import nodemailer, { Transporter } from "nodemailer";
 
 interface EmailOptions {
   to: string;
@@ -91,7 +91,7 @@ const getFrontendUrl = (appSource: AppSource): string => {
 export const sendPasswordResetEmail = async (
   email: string,
   resetToken: string,
-  appSource: AppSource,
+  appSource: AppSource
 ): Promise<void> => {
   const frontendUrl = getFrontendUrl(appSource);
   const resetUrl = `${frontendUrl}/#/auth/reset-password?token=${resetToken}`;
@@ -206,11 +206,15 @@ export const sendOtpEmail = async (
   email: string,
   code: string,
   type: "email_verification" | "password_reset",
-  ttlMinutes: number = 10,
+  ttlMinutes: number = 10
 ): Promise<void> => {
   const isVerification = type === "email_verification";
-  const subject = isVerification ? "Verify Your Email" : "Your Password Reset Code";
-  const heading = isVerification ? "Email Verification Code" : "Password Reset Code";
+  const subject = isVerification
+    ? "Verify Your Email"
+    : "Your Password Reset Code";
+  const heading = isVerification
+    ? "Email Verification Code"
+    : "Password Reset Code";
   const purpose = isVerification
     ? "verify your email address"
     : "reset your password";

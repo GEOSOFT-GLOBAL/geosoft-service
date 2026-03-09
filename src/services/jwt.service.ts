@@ -6,8 +6,8 @@ import {
   type SignOptions,
 } from "jsonwebtoken";
 import APIError from "../helpers/api.error";
-import { TokenPayload, AccessTokenPayload } from "../interfaces/params";
 import { JWT_EXPIRY, JWT_SECRET } from "../config/constants";
+import { TokenPayload, AccessTokenPayload } from "../interfaces/params";
 
 // Default to 7 days if not set - convert to seconds for numeric expiry
 const getExpirySeconds = (): number => {
