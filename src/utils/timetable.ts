@@ -1,5 +1,5 @@
-import { ICellContent, ITimetableEntry } from "../interfaces/timetable";
 import { generateTimeLabels } from "../lib/timetable";
+import { ICellContent, ITimetableEntry } from "../interfaces/timetable";
 
 export const dayLabels = [
   "Monday",

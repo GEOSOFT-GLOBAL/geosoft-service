@@ -1,7 +1,7 @@
 export enum AppType {
-  TIMETABLELY = "timetablely",
   DOCXIQ = "docxiq",
   LINKSHYFT = "linkshyft",
+  TIMETABLELY = "timetablely",
 }
 
 interface AppPromptConfig {

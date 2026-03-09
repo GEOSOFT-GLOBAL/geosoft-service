@@ -1,7 +1,7 @@
-import { AITimetableConfig, ICellContent } from "../interfaces/timetable";
+import { dayLabels } from "../utils/timetable";
 import { generateTimeLabels } from "../lib/timetable";
 import { MakePrompt } from "../services/gemini.service";
-import { dayLabels } from "../utils/timetable";
+import { AITimetableConfig, ICellContent } from "../interfaces/timetable";
 
 export const generateAITimetable = async (
   config: AITimetableConfig,

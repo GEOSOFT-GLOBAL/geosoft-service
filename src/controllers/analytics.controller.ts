@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { createResponse } from "../helpers/response";
+
 import APIError from "../helpers/api.error";
-import { Visit } from "../models/visit.model";
 import { User } from "../models/user.model";
+import { Visit } from "../models/visit.model";
 import { AppSource } from "../interfaces/user";
+import { createResponse } from "../helpers/response";
 
 export class AnalyticsController {
   public static async trackVisit(
