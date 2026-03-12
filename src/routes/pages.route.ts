@@ -12,5 +12,6 @@ router.use(
 router.use("/docxiq", express.static(path.join(publicPath, "docxiq")));
 router.use("/tickly", express.static(path.join(publicPath, "tickly")));
 router.use("/linkshyft", express.static(path.join(publicPath, "linkshyft")));
+router.use("/quant", express.static(path.join(publicPath, "quant")));
 
 export default router;
