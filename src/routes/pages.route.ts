@@ -14,5 +14,6 @@ router.use("/tickly", express.static(path.join(publicPath, "tickly")));
 router.use("/linkshyft", express.static(path.join(publicPath, "linkshyft")));
 router.use("/quant", express.static(path.join(publicPath, "quant")));
 router.use("/jot-note", express.static(path.join(publicPath, "jot-note")));
+router.use("/ng-tax", express.static(path.join(publicPath, "ng-tax")));
 
 export default router;
