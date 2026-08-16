@@ -6,6 +6,7 @@ import { connectDB } from "./config/db";
 import pagesRouter from "./routes/pages.route";
 import express, { Application, json } from "express";
 import errorHandler from "./middlewares/error.middleware";
+import { captureRawBody } from "./middlewares/raw-body";
 import { ALLOWED_ORIGINS, PORT } from "./config/constants";
 
 if (!PORT) {
@@ -19,7 +20,9 @@ const app: Application = express();
 app.use(morgan("dev"));
 
 app.use(cors({ origin: ALLOWED_ORIGINS, credentials: true }));
-app.use(json());
+// `verify` keeps the raw bytes alongside the parsed body; the Paystack
+// webhook signs what was sent, not what we parsed.
+app.use(json({ verify: captureRawBody }));
 
 app.use("/pages", pagesRouter);
 app.use("/api/v1", rootRouter);

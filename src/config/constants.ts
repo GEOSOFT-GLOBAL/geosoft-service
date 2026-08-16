@@ -71,6 +71,31 @@ export const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET || "";
 
 export const BROWSERLESS_TOKEN = process.env.BROWSERLESS_TOKEN;
 
+// Paystack. The secret key both authenticates our API calls and signs the
+// webhooks we receive, so it must never reach a client.
+export const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY || "";
+export const PAYSTACK_PUBLIC_KEY = process.env.PAYSTACK_PUBLIC_KEY || "";
+export const PAYSTACK_BASE_URL =
+  process.env.PAYSTACK_BASE_URL || "https://api.paystack.co";
+/**
+ * Must be enabled on the Paystack account. NGN is always available; USD, GHS,
+ * ZAR and KES are opt-in per account.
+ */
+export const PAYSTACK_CURRENCY = process.env.PAYSTACK_CURRENCY || "NGN";
+/**
+ * How many of the smallest unit make one major unit — kobo per naira, cents
+ * per dollar. Every currency Paystack settles in uses 100.
+ */
+export const PAYSTACK_SUBUNITS = 100;
+/**
+ * Multiplies catalog prices, which are quoted in USD to match the pricing
+ * page. Leave at 1 when PAYSTACK_CURRENCY is USD; set to your naira rate
+ * when charging in NGN.
+ */
+export const PAYSTACK_PRICE_MULTIPLIER = Number(
+  process.env.PAYSTACK_PRICE_MULTIPLIER || "1",
+);
+
 // export const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 export const DOCXIQ_GEMINI_API_KEY = process.env.DOCXIQ_GEMINI_API_KEY;
 export const LINKSHYFT_GEMINI_API_KEY = process.env.LINKSHYFT_GEMINI_API_KEY;
