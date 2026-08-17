@@ -8,6 +8,7 @@ import { NgTaxRouter } from "./ng-tax";
 import PagesRouter from "./pages.route";
 import { CreditsRouter } from "./credits.route";
 import { WorkspaceRouter } from "./workspace.route";
+import { ApiKeyRouter } from "./api-key.route";
 import { createResponse } from "../helpers/response";
 
 const router = Router();
@@ -29,6 +30,7 @@ router.use("/docxiq", DocxIQRouter);
 router.use("/timetablely", TimetablelyRouter);
 router.use("/workspaces", WorkspaceRouter);
 router.use("/credits", CreditsRouter);
+router.use("/api-keys", ApiKeyRouter);
 router.use("/ng-tax", NgTaxRouter);
 router.use(PagesRouter);
 

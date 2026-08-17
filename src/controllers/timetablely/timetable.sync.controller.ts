@@ -93,6 +93,8 @@ interface SyncTimetableBody {
     description?: string;
     studentCount?: number;
     room?: string;
+    /** Course ids this class takes; drives session-scoped generation. */
+    subjects?: string[];
   }>;
   specialBlocks?: Array<{
     _id?: string;
