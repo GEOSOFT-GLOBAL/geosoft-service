@@ -6,6 +6,7 @@ import { createResponse } from "../helpers/response";
 import {
   CheckoutKind,
   CreditFeature,
+  CreditOwnerType,
   CreditTransactionStatus,
   CreditTransactionType,
   ICreditAccountDocument,
@@ -395,7 +396,9 @@ export const CreditsController = {
           amountSubunits: toSubunits(price),
           userId: actor.id,
           workspaceId:
-            owner.ownerType === "workspace" ? owner.ownerId.toString() : undefined,
+            owner.ownerType === CreditOwnerType.WORKSPACE
+              ? owner.ownerId.toString()
+              : undefined,
         },
       });
 
